@@ -26,7 +26,7 @@ export default function CameraScreen() {
     console.log(studentData);
     try {
       const response = await axios.post(
-        "http://https://scanx.onrender.com/students",
+        "http://scanx.onrender.com/students",
         studentData
       );
 
