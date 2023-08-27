@@ -3,6 +3,7 @@ import React, {
   useEffect,
 } from "react";
 import {
+  Alert,
   Text,
   View,
   StyleSheet,
@@ -11,7 +12,7 @@ import {
 import { BarCodeScanner } from "expo-barcode-scanner";
 import axios from "axios";
 
-export default function App() {
+export default function CameraScreen() {
   const [
     hasPermission,
     setHasPermission,
@@ -25,7 +26,7 @@ export default function App() {
     console.log(studentData);
     try {
       const response = await axios.post(
-        "http://localhost:8080/students",
+        "http://https://scanx.onrender.com/students",
         studentData
       );
 
@@ -39,6 +40,10 @@ export default function App() {
         error
       );
     }
+  };
+
+  const handleAlert = () => {
+    alert("Data was sent");
   };
 
   useEffect(() => {
@@ -112,6 +117,7 @@ export default function App() {
           await createStudent(
             studentData
           );
+          handleAlert();
         } catch (err) {
           console.error(err);
         }

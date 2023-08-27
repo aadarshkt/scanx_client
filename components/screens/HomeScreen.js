@@ -10,6 +10,10 @@ import {
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
+      <View
+        style={
+          styles.statusBarIcon
+        }></View>
       <Button
         title="go to camera"
         onPress={() =>
@@ -17,7 +21,6 @@ const HomeScreen = ({ navigation }) => {
         }>
         Camera
       </Button>
-      <StatusBar style="auto" />
     </View>
   );
 };
@@ -30,5 +33,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  statusBarIcon: {
+    position: "absolute",
+    top: StatusBar.currentHeight + 5,
+    right: 10,
+  },
+  statusbar: {
+    backgroundColor: "#fff",
   },
 });
