@@ -11,6 +11,33 @@ import {
 } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
+import { ActivityIndicator } from "react-native-paper";
+
+async function save(key, value) {
+  await SecureStore.setItemAsync(
+    key,
+    value
+  );
+}
+
+const locations = new Set([
+  "Library",
+  "SAC",
+]);
+
+async function getValueFor(
+  key,
+  setValue
+) {
+  let result =
+    await SecureStore.getItemAsync(key);
+  if (result) {
+    setValue(result);
+  } else {
+    setValue("");
+  }
+}
 
 export default function CameraScreen() {
   const [
@@ -20,16 +47,50 @@ export default function CameraScreen() {
   const [scanned, setScanned] =
     useState(false);
 
+  const [loading, setLoading] =
+    useState(false);
+
+  const [name, setName] = useState("");
+  const [rollNumber, setRollNumber] =
+    useState("");
+  const [email, setEmail] =
+    useState("");
+  const [
+    mobileNumber,
+    setMobileNumber,
+  ] = useState("");
+  const [roomNo, setRoomNo] =
+    useState("");
+  const [hostel, setHostel] =
+    useState("");
+
+  useEffect(() => {
+    getValueFor("name", setName);
+    getValueFor(
+      "roll_number",
+      setRollNumber
+    );
+    getValueFor("email", setEmail);
+    getValueFor(
+      "mobile_number",
+      setMobileNumber
+    );
+    getValueFor("room_no", setRoomNo);
+    getValueFor("hostel", setHostel);
+  }, []);
+
   const createStudent = async (
     studentData
   ) => {
     console.log(studentData);
     try {
-      const response = await axios.post(
-        "http://scanx.onrender.com/students",
-        studentData
-      );
-
+      setLoading(true);
+      const response = await axios
+        .post(
+          "https://scanx.onrender.com/students",
+          studentData
+        )
+        .then(() => setLoading(false));
       console.log(
         "Student created:",
         response.data
@@ -43,7 +104,30 @@ export default function CameraScreen() {
   };
 
   const handleAlert = () => {
-    alert("Data was sent");
+    getValueFor("name");
+  };
+
+  const createRecord = async (
+    data,
+    studentRecord
+  ) => {
+    console.log(data, studentRecord);
+    try {
+      setLoading(true);
+      const response = await axios
+        .post(
+          "https://scanx.onrender.com/location/createRecord",
+          studentRecord,
+          { params: { location: data } }
+        )
+        .then(() => setLoading(false));
+      console.log("Record Created");
+    } catch (error) {
+      console.error(
+        "Error creating Record",
+        error
+      );
+    }
   };
 
   useEffect(() => {
@@ -63,11 +147,19 @@ export default function CameraScreen() {
     type,
     data,
   }) => {
-    setScanned(true);
-    if (
-      data === "Amber" ||
-      data === "SAC"
-    ) {
+    if (locations.has(data)) {
+      const studentRecord = {
+        name: name,
+        roll_no: rollNumber,
+        mobile_number: mobileNumber,
+        room_no: roomNo,
+        hostel: hostel,
+        description: data,
+      };
+      await createRecord(
+        data,
+        studentRecord
+      );
     } else {
       const text = data;
       // Extract name and roll number using regex
@@ -114,8 +206,21 @@ export default function CameraScreen() {
           total_sac_time: 0,
         };
         try {
+          setLoading(true);
           await createStudent(
             studentData
+          ).then(() =>
+            setLoading(false)
+          );
+          save("name", name);
+          save(
+            "roll_number",
+            rollNumber
+          );
+          save("email", email);
+          save(
+            "mobile_number",
+            mobileNumber
           );
           handleAlert();
         } catch (err) {
@@ -125,6 +230,7 @@ export default function CameraScreen() {
         alert("No match found.");
       }
     }
+    setScanned(true);
   };
 
   if (hasPermission === null) {
@@ -158,6 +264,11 @@ export default function CameraScreen() {
           onPress={() =>
             setScanned(false)
           }
+        />
+      )}
+      {loading && (
+        <ActivityIndicator
+          animating={true}
         />
       )}
     </View>

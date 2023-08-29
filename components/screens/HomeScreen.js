@@ -10,10 +10,6 @@ import {
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <View
-        style={
-          styles.statusBarIcon
-        }></View>
       <Button
         title="go to camera"
         onPress={() =>
