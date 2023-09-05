@@ -63,6 +63,8 @@ export default function CameraScreen() {
     useState("");
   const [hostel, setHostel] =
     useState("");
+  const [token, setToken] =
+    useState("");
 
   useEffect(() => {
     getValueFor("name", setName);
@@ -77,6 +79,7 @@ export default function CameraScreen() {
     );
     getValueFor("room_no", setRoomNo);
     getValueFor("hostel", setHostel);
+    getValueFor("token", setToken);
   }, []);
 
   const createStudent = async (
@@ -88,7 +91,14 @@ export default function CameraScreen() {
       const response = await axios
         .post(
           "https://scanx.onrender.com/students",
-          studentData
+          studentData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type":
+                "application/json",
+            },
+          }
         )
         .then(() => setLoading(false));
       console.log(

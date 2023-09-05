@@ -7,7 +7,9 @@ import {
   Button,
 } from "react-native";
 
-const HomeScreen = ({ navigation }) => {
+export default HomeScreen = ({
+  navigation,
+}) => {
   return (
     <View style={styles.container}>
       <Button
@@ -20,8 +22,6 @@ const HomeScreen = ({ navigation }) => {
     </View>
   );
 };
-
-export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
