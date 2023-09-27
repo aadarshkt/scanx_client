@@ -20,6 +20,7 @@ import TokenLoadingScreen from "./screens/TokenLoadingScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import HomeScreen from "./screens/HomeScreen";
 import CameraScreen from "./screens/CameraScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 
 const Stack =
   createNativeStackNavigator();
@@ -47,67 +48,76 @@ export default function MainApp() {
   );
 
   return (
-    <>
-      {loading ? (
-        <TokenLoadingScreen />
-      ) : (
-        <>
-          {authToken ? (
-            <AuthenticatedApp />
-          ) : (
-            <SignUpScreen />
-          )}
-        </>
-      )}
-    </>
+    <PaperProvider>
+      <NavigationContainer>
+        {loading ? (
+          <TokenLoadingScreen />
+        ) : (
+          <>
+            {authToken == null ? (
+              <Stack.Navigator initialRouteName="SignInScreen">
+                <Stack.Screen
+                  name="SignUpScreen"
+                  component={
+                    SignUpScreen
+                  }
+                />
+                <Stack.Screen
+                  name="SignInScreen"
+                  component={
+                    SignInScreen
+                  }
+                />
+              </Stack.Navigator>
+            ) : (
+              <AuthenticatedApp />
+            )}
+          </>
+        )}
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 
 const AuthenticatedApp = () => {
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen
-            name="Camera"
-            component={CameraScreen}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={({
-              navigation,
-            }) => ({
-              headerStyle: {
-                backgroundColor: "#fff",
-              },
-              headerBackVisible: false,
-              headerRight: () => (
-                <View
-                  style={
-                    styles.accountIcon
-                  }>
-                  <MaterialIcons
-                    name="account-circle"
-                    size={24}
-                    color="black"
-                    onPress={() =>
-                      navigation.navigate(
-                        "Profile"
-                      )
-                    }
-                  />
-                </View>
-              ),
-            })}
-          />
-          <Stack.Screen
-            name="Profile"
-            component={ProfileScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen
+        name="Camera"
+        component={CameraScreen}
+      />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={({ navigation }) => ({
+          headerStyle: {
+            backgroundColor: "#fff",
+          },
+          headerBackVisible: false,
+          headerRight: () => (
+            <View
+              style={
+                styles.accountIcon
+              }>
+              <MaterialIcons
+                name="account-circle"
+                size={24}
+                color="black"
+                onPress={() =>
+                  navigation.navigate(
+                    "Profile"
+                  )
+                }
+              />
+            </View>
+          ),
+        })}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+      />
+    </Stack.Navigator>
   );
 };
 

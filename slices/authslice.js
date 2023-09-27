@@ -39,7 +39,12 @@ const authSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    //update the global token state.
+    updateToken: (state, action) => {
+      state.authToken = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(
@@ -67,5 +72,8 @@ const authSlice = createSlice({
       );
   },
 });
+
+export const { updateToken } =
+  authSlice.actions;
 
 export default authSlice.reducer;

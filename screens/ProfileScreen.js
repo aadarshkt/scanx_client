@@ -9,27 +9,10 @@ import {
   StyleSheet,
   Button,
 } from "react-native";
-import * as SecureStore from "expo-secure-store";
-
-async function getValueFor(
-  key,
-  setValue
-) {
-  let result =
-    await SecureStore.getItemAsync(key);
-  if (result) {
-    setValue(result);
-  } else {
-    setValue("");
-  }
-}
-
-async function save(key, value) {
-  await SecureStore.setItemAsync(
-    key,
-    value
-  );
-}
+import {
+  getValueFor,
+  save,
+} from "../utils/localStore";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
