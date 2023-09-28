@@ -22,6 +22,7 @@ import {
 } from "../utils/localStore";
 import { useDispatch } from "react-redux";
 import { updateToken } from "../slices/authslice";
+import { baseURL } from "../api/baseURL";
 
 const SignInScreen = () => {
   const [email, setEmail] =
@@ -34,28 +35,39 @@ const SignInScreen = () => {
   const navigation = useNavigation();
 
   const handleNewToken = (token) => {
-    console.log(token);
     dispatch(updateToken(token));
   };
 
   const handleSignIn = async () => {
     try {
-      const response = await axios.post(
-        "http://192.168.179.129:8080/login",
+      const res = await axios.post(
+        `http://${baseURL}/login`,
         {
           email: email,
           password: password,
         }
       );
-      console.log(response.data.token);
       await save(
         "token",
-        response.data.token
+        res.data.token
       );
-      await getValueFor(
-        "token",
-        handleNewToken
+      await save(
+        "name",
+        res.data.userData.name
       );
+      await save(
+        "roll_number",
+        res.data.userData.roll_number
+      );
+      await save(
+        "email",
+        res.data.userData.email
+      );
+      await save(
+        "mobile_number",
+        res.data.userData.mobile_number
+      );
+      handleNewToken(res.data.token);
     } catch (error) {
       console.log(
         "Error logging" + error

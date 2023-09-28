@@ -1,7 +1,4 @@
-import {
-  StackActions,
-  useNavigation,
-} from "@react-navigation/native";
+import { StackActions } from "@react-navigation/native";
 import axios from "axios";
 import React, {
   useEffect,
@@ -16,10 +13,18 @@ import {
   Button,
   TextInput,
 } from "react-native-paper";
+import { getInfoFromCard } from "../utils/DataExtract";
+import { baseURL } from "../api/baseURL";
+import { save } from "../utils/localStore";
 
-const SignUpScreen = () => {
-  const [email, setEmail] =
-    useState("");
+const SignUpScreen = ({
+  navigation,
+  route,
+}) => {
+  const [disabled, setDisabled] =
+    useState(true);
+  const [studentData, setStudentData] =
+    useState({});
   const [password, setPassword] =
     useState("");
   const [
@@ -27,60 +32,98 @@ const SignUpScreen = () => {
     setConfirmPassword,
   ] = useState("");
 
-  const navigation = useNavigation();
+  const createStudent = async (
+    studentData,
+    password
+  ) => {
+    const profile = {
+      ...studentData,
+      password: password,
+    };
+    try {
+      const response = await axios.post(
+        `http://${baseURL}/students`,
+        profile
+      );
+      console.log(
+        "Student created:",
+        response.data
+      );
+      //Also save card data to localStore
+      for (let key in studentData) {
+        if (
+          studentData.hasOwnProperty(
+            key
+          )
+        ) {
+          const value =
+            studentData[key];
+          console.log(key, value);
+          await save(`${key}`, value);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Error creating student:",
+        error
+      );
+    } finally {
+      navigation.navigate(
+        "SignInScreen"
+      );
+    }
+  };
 
   const handleRegister = async () => {
-    const isMatch = email.match(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.iitism\.ac\.in$/
-    );
-    if (!isMatch) {
-      alert("Please use College Email");
-      return;
-    }
     if (password != confirmPassword) {
       alert(
         "Confirm Password not matching"
       );
       return;
     }
-    const registerData = {
-      email: email,
-      password: password,
-    };
-    try {
-      const response = await axios.post(
-        "http://192.168.179.129:8080/register",
-        registerData
-      );
-      if (response.status == 200) {
-        navigation.dispatch(
-          StackActions.replace(
-            "SignInScreen"
-          )
-        );
-      } else if (
-        response.status == 409
-      ) {
-        alert("Email already in use");
-      }
-    } catch (error) {
-      alert("Error registering");
-      console.log(
-        "Error registering" + error
-      );
-    }
+    await createStudent(
+      studentData,
+      password
+    );
   };
+
+  useEffect(() => {
+    if (route.params?.data) {
+      const studentData =
+        getInfoFromCard(
+          route.params.data
+        );
+      setStudentData(studentData);
+    }
+  }, [route.params?.data]);
+
+  useEffect(() => {
+    if (
+      password == confirmPassword &&
+      Object.keys(studentData).length !=
+        0
+    ) {
+      setDisabled(false);
+    }
+  }, [
+    password,
+    confirmPassword,
+    studentData,
+  ]);
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <TextInput
+        <Button
           mode="outlined"
-          label={`College Email`}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
+          onPress={() =>
+            navigation.navigate(
+              "Camera",
+              { parent: "SignUpScreen" }
+            )
+          }>
+          Register using college Id card
+        </Button>
       </View>
       <View style={styles.row}>
         <TextInput
@@ -102,6 +145,7 @@ const SignUpScreen = () => {
       </View>
       <View style={styles.row}>
         <Button
+          disabled={disabled}
           mode="contained"
           onPress={handleRegister}>
           Register

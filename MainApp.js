@@ -16,11 +16,11 @@ import {
 import { useEffect } from "react";
 import { getAuthToken } from "./slices/authslice";
 import SignInScreen from "./screens/SignInScreen";
-import TokenLoadingScreen from "./screens/TokenLoadingScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import HomeScreen from "./screens/HomeScreen";
-import CameraScreen from "./screens/CameraScreen";
+import EnterExitScreen from "./screens/EnterExitScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import Camera from "./utils/Camera";
 
 const Stack =
   createNativeStackNavigator();
@@ -28,52 +28,46 @@ const Stack =
 export default function MainApp() {
   const dispatch = useDispatch();
   const authToken = useSelector(
-    (state) => state.auth.authToken
-  );
-  const loading = useSelector(
-    (state) => state.auth.loading
-  );
-  const error = useSelector(
-    (state) => state.auth.error
+    (state) => state.auth.token
   );
 
   useEffect(() => {
     dispatch(getAuthToken);
-  }, [dispatch]);
+  }, [dispatch, authToken]);
 
   console.log(
-    loading,
-    authToken,
-    error
+    authToken == null
+      ? "Null"
+      : "Token Available"
   );
 
   return (
     <PaperProvider>
       <NavigationContainer>
-        {loading ? (
-          <TokenLoadingScreen />
-        ) : (
-          <>
-            {authToken == null ? (
-              <Stack.Navigator initialRouteName="SignInScreen">
-                <Stack.Screen
-                  name="SignUpScreen"
-                  component={
-                    SignUpScreen
-                  }
-                />
-                <Stack.Screen
-                  name="SignInScreen"
-                  component={
-                    SignInScreen
-                  }
-                />
-              </Stack.Navigator>
-            ) : (
-              <AuthenticatedApp />
-            )}
-          </>
-        )}
+        <>
+          {authToken == null ? (
+            <Stack.Navigator initialRouteName="SignInScreen">
+              <Stack.Screen
+                name="SignUpScreen"
+                component={SignUpScreen}
+              />
+              <Stack.Screen
+                name="Camera"
+                component={Camera}
+                initialParams={{
+                  parent:
+                    "SignUpScreen",
+                }}
+              />
+              <Stack.Screen
+                name="SignInScreen"
+                component={SignInScreen}
+              />
+            </Stack.Navigator>
+          ) : (
+            <AuthenticatedApp />
+          )}
+        </>
       </NavigationContainer>
     </PaperProvider>
   );
@@ -84,7 +78,10 @@ const AuthenticatedApp = () => {
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
         name="Camera"
-        component={CameraScreen}
+        component={Camera}
+        initialParams={{
+          parent: "Home",
+        }}
       />
       <Stack.Screen
         name="Home"

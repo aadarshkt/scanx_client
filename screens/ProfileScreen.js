@@ -10,9 +10,12 @@ import {
   Button,
 } from "react-native";
 import {
+  deleteItem,
   getValueFor,
   save,
 } from "../utils/localStore";
+import { useDispatch } from "react-redux";
+import { updateToken } from "../slices/authslice";
 
 const ProfileScreen = () => {
   const [name, setName] = useState("");
@@ -48,6 +51,28 @@ const ProfileScreen = () => {
     save("room_no", roomNo);
     save("hostel", hostel);
     alert("Changes Saved!");
+  };
+
+  const dispatch = useDispatch();
+
+  const handleLogOut = async () => {
+    console.log("Log out pressed");
+    try {
+      await deleteItem("token");
+      await deleteItem("name");
+      await deleteItem("email");
+      await deleteItem("roll_number");
+      await deleteItem("mobile_number");
+      await deleteItem("room_no");
+      await deleteItem("hostel");
+      dispatch(updateToken(null));
+      console.log("Delete Success");
+    } catch (error) {
+      console.error(
+        "Secure Store delete error" +
+          error
+      );
+    }
   };
 
   return (
@@ -132,6 +157,12 @@ const ProfileScreen = () => {
         <Button
           title="Save Changes"
           onPress={handleChanges}
+        />
+      </View>
+      <View style={styles.row}>
+        <Button
+          title="Logout"
+          onPress={handleLogOut}
         />
       </View>
     </View>
