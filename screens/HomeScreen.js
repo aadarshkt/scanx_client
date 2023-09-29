@@ -53,31 +53,6 @@ export default HomeScreen = ({
       route.params?.data
   );
 
-  useEffect(() => {
-    //Todo add description to profile(userData) for entering
-    console.log(
-      "route params is" +
-        route.params?.data
-    );
-    const createLocationRecord =
-      async () => {
-        if (
-          route.params?.data &&
-          locations.has(
-            route.params?.data
-          )
-        ) {
-          const profile =
-            await getProfile();
-          await createRecord(
-            route.params.data,
-            profile
-          );
-        }
-      };
-    createLocationRecord();
-  });
-
   const [
     last_location,
     setLast_location,
@@ -88,6 +63,11 @@ export default HomeScreen = ({
     setTotalSACTimeSpent,
   ] = useState("");
 
+  const [
+    totalLibraryTimeSpent,
+    setTotalLibraryTimeSpent,
+  ] = useState("");
+
   const token = useSelector(
     (state) => state.auth.token
   );
@@ -95,6 +75,19 @@ export default HomeScreen = ({
   //No direct use async with useEffect top-level functions remains sychronous
   useEffect(() => {
     const fetch = async () => {
+      if (
+        route.params?.data &&
+        locations.has(
+          route.params?.data
+        )
+      ) {
+        const profile =
+          await getProfile();
+        await createRecord(
+          route.params.data,
+          profile
+        );
+      }
       const get_last_location =
         async () => {
           try {
@@ -135,6 +128,11 @@ export default HomeScreen = ({
             last_location_value.total_sac_time_spent
           )
         );
+        setTotalLibraryTimeSpent(
+          convertTimeString(
+            last_location_value.total_library_time_spent
+          )
+        );
       }
     };
     fetch();
@@ -149,6 +147,10 @@ export default HomeScreen = ({
       <HomeCard
         label="Total SAC time spent"
         data={totalSACTimeSpent}
+      />
+      <HomeCard
+        label="Total Library time spent"
+        data={totalLibraryTimeSpent}
       />
       <Button
         title="go to camera"
