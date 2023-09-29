@@ -13,6 +13,7 @@ export const getAuthToken =
     async () => {
       try {
         const token = getItem("token");
+        console.log(token);
         const decodedToken =
           decode(token);
         const tokenExpirationTime =

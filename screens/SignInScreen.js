@@ -47,6 +47,7 @@ const SignInScreen = () => {
           password: password,
         }
       );
+
       await save(
         "token",
         res.data.token
@@ -83,6 +84,8 @@ const SignInScreen = () => {
           label={`College Email`}
           value={email}
           onChangeText={setEmail}
+          textContentType="emailAddress"
+          autoComplete="email"
           keyboardType="email-address"
         />
       </View>
@@ -91,6 +94,8 @@ const SignInScreen = () => {
           mode="outlined"
           label={`Password`}
           value={password}
+          autoComplete="password"
+          textContentType="password"
           onChangeText={setPassword}
         />
       </View>

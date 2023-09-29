@@ -18,7 +18,6 @@ import { getAuthToken } from "./slices/authslice";
 import SignInScreen from "./screens/SignInScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import HomeScreen from "./screens/HomeScreen";
-import EnterExitScreen from "./screens/EnterExitScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import Camera from "./utils/Camera";
 
