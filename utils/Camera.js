@@ -48,7 +48,10 @@ export default function Camera({
     else {
       navigation.navigate({
         name: parent,
-        params: { data: data },
+        params: {
+          data: data,
+          is_from_camera_screen: true,
+        },
         merge: true,
       });
       setScanned(true);

@@ -1,3 +1,3 @@
 1. Don't allow for scanning location without room_no and hostel, ask it when registering.
-2. Initial time spent on sac.
+2. route.params.?data is not there in useCallback eventhough it is available outside.
 3. 

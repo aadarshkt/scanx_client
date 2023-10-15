@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -14,7 +15,8 @@ import { baseURL } from "../api/baseURL";
 import axios from "axios";
 import HomeCard from "../components/HomeCard";
 import { useSelector } from "react-redux";
-import { convertTimeString } from "../utils/DateTimeFormat";
+import { format_time } from "../utils/millisToTime";
+import { useFocusEffect } from "@react-navigation/native";
 
 const locations = new Set([
   "Library",
@@ -48,120 +50,167 @@ export default HomeScreen = ({
     }
   };
 
-  console.log(
-    "First route params is" +
-      route.params?.data
-  );
-
   const [
-    last_location,
-    setLast_location,
-  ] = useState("");
-
-  const [
-    totalSACTimeSpent,
-    setTotalSACTimeSpent,
-  ] = useState("");
-
-  const [
-    totalLibraryTimeSpent,
-    setTotalLibraryTimeSpent,
-  ] = useState("");
+    home_screen_data,
+    set_home_screen_data,
+  ] = useState({
+    last_location: "",
+    total_sac_time_spent: "",
+    total_library_time_spent: "",
+  });
 
   const token = useSelector(
     (state) => state.auth.token
   );
 
-  //No direct use async with useEffect top-level functions remains sychronous
-  useEffect(() => {
-    const fetch = async () => {
-      if (
-        route.params?.data &&
-        locations.has(
+  //whenever component mounts that is when user comes to this screen from camera screen.
+  //check route.params.data and request backend accordingly.
+  //no state change with below useEffect, no problem in empty dependency array.
+  //will fire every time user comes from camera screen.
+  console.log(
+    "First route params is" +
+      route.params?.data
+  );
+  console.log(
+    "whether from camera screen " +
+      route.params
+        ?.is_from_camera_screen
+  );
+
+  //when home screen comes in focus run this useEffect using useFocusEffect and useCallback
+  // to memoise.
+  //Can cause problems in future. When user comes back to homescreen, you should not create
+  //a new record.
+  useFocusEffect(
+    useCallback(() => {
+      console.log(
+        "route params is" +
           route.params?.data
-        )
-      ) {
-        const profile =
-          await getProfile();
-        await createRecord(
-          route.params.data,
-          profile
-        );
-      }
-      const get_last_location =
+      );
+      const create_record =
         async () => {
-          try {
-            const last_location_response =
-              await axios.get(
-                `http://${baseURL}/students/last_location`,
-                {
-                  headers: {
-                    Authorization: `bearer ${token}`,
-                    "Content-Type":
-                      "application/json",
-                  },
-                }
-              );
-            console.log(
-              last_location_response
-                .data.last_location
-            );
-            return last_location_response.data;
-          } catch (error) {
-            console.error(
-              "Error fetching last location" +
-                error
+          if (
+            route.params?.data !==
+              undefined &&
+            locations.has(
+              route.params?.data
+            ) &&
+            route.params
+              ?.is_from_camera_screen ===
+              true
+          ) {
+            const profile =
+              await getProfile();
+            await createRecord(
+              route.params.data,
+              profile
             );
           }
         };
-      if (token != null) {
-        const last_location_value =
-          await get_last_location();
-        console.log(
-          last_location_value
-        );
-        setLast_location(
-          last_location_value.last_location
-        );
-        setTotalSACTimeSpent(
-          convertTimeString(
-            last_location_value.total_sac_time_spent
-          )
-        );
-        setTotalLibraryTimeSpent(
-          convertTimeString(
-            last_location_value.total_library_time_spent
-          )
-        );
-      }
-    };
-    fetch();
-  });
+      create_record();
+      console.log(
+        "create record useEffect run"
+      );
+    }, [])
+  );
+
+  //one question whether state persists between navigation.
+  //what about set_is_home_updated == false
+  //will it become false every time user comes to home_screen
+  //or will it remains true;
+
+  //answer - home screen remains mounted even if user navigates to camera, since it is mounted so it remains true
+  //because empty dependency array does not run when user comes from camera to home
+
+  //from docs When going back from B to A, componentWillUnmount of B is called, but componentDidMount of A is not because A remained mounted the whole time.
+
+  //get fresh data every time homescreen gets in focus.
+  //TODO: move to button refresh to lower backend requests.
+  useFocusEffect(
+    useCallback(() => {
+      const fetch_home_screen_data =
+        async () => {
+          const get_home_screen_data =
+            async () => {
+              try {
+                const home_screen_value =
+                  await axios.get(
+                    `http://${baseURL}/students/last_location`,
+                    {
+                      headers: {
+                        Authorization: `bearer ${token}`,
+                        "Content-Type":
+                          "application/json",
+                      },
+                    }
+                  );
+                return home_screen_value.data;
+              } catch (error) {
+                console.error(
+                  "Error fetching last location" +
+                    error
+                );
+              }
+            };
+          if (token != null) {
+            const home_screen_data =
+              await get_home_screen_data();
+            console.log(
+              home_screen_data
+            );
+            set_home_screen_data({
+              last_location:
+                home_screen_data.last_location,
+              total_sac_time_spent:
+                format_time(
+                  home_screen_data.total_sac_time_spent
+                ),
+              total_library_time_spent:
+                format_time(
+                  home_screen_data.total_library_time_spent
+                ),
+            });
+          }
+        };
+      fetch_home_screen_data();
+      console.log(
+        "get_home_screen_data useEffect run"
+      );
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
       <HomeCard
         label="Last Location"
-        data={last_location}
+        data={
+          home_screen_data.last_location
+        }
       />
       <HomeCard
         label="Total SAC time spent"
-        data={totalSACTimeSpent}
+        data={
+          home_screen_data.total_sac_time_spent
+        }
       />
       <HomeCard
         label="Total Library time spent"
-        data={totalLibraryTimeSpent}
+        data={
+          home_screen_data.total_library_time_spent
+        }
       />
-      <Button
-        title="go to camera"
-        onPress={() =>
-          navigation.navigate(
-            "Camera",
-            { parent: "Home" }
-          )
-        }>
-        Camera
-      </Button>
+      <View style={{ marginTop: 20 }}>
+        <Button
+          title="go to camera"
+          onPress={() =>
+            navigation.navigate(
+              "Camera",
+              { parent: "Home" }
+            )
+          }>
+          Camera
+        </Button>
+      </View>
     </View>
   );
 };
