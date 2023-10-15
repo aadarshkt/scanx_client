@@ -9,6 +9,7 @@ A react native app to scan QR code to gain access to locations in college like l
 5. Currently available for Library and Student Activity Center.
 6. Get last location where you entered or exited at.
 7. Get total time spent at any location during entire stay at college at one place.
+8. Admin portal for any admin at college to check through entries of location information.
 
 # Inside Previews
 
@@ -19,3 +20,7 @@ A react native app to scan QR code to gain access to locations in college like l
 
 <img src="https://github.com/aadarshkt/scanx_client/assets/72285744/eb5d933c-86da-4c10-b240-59254715cace" width="250" height="520">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://github.com/aadarshkt/scanx_client/assets/72285744/42631672-b300-48fb-84bc-f51bfb8da830" width="250" height="520">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+<img width="1439" alt="Screenshot 2023-10-15 at 18 31 04" src="https://github.com/aadarshkt/scanx_client/assets/72285744/ce358b83-f721-4ee2-8cab-50d917b4aea4">
+
