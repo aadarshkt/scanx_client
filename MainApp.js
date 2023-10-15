@@ -57,10 +57,16 @@ export default function MainApp() {
                   parent:
                     "SignUpScreen",
                 }}
+                options={{
+                  title: "Sign Up",
+                }}
               />
               <Stack.Screen
                 name="SignInScreen"
                 component={SignInScreen}
+                options={{
+                  title: "Sign In",
+                }}
               />
             </Stack.Navigator>
           ) : (

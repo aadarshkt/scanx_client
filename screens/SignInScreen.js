@@ -104,7 +104,7 @@ const SignInScreen = () => {
         <Button
           mode="contained"
           onPress={handleSignIn}>
-          SignIn
+          Sign In
         </Button>
       </View>
       <View style={styles.row}>
