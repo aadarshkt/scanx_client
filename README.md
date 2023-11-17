@@ -15,7 +15,7 @@ A react native app to scan QR code to gain access to locations in college like l
 
 
 # Structure of Scanx
-<img width="3711" alt="Architecture Scanx" src="https://github.com/aadarshkt/scanx_client/assets/72285744/2366c27e-e50b-4699-9726-9aee68f4f1e2">
+<img width="3711" alt="Architecture Scanx" src="https://github.com/aadarshkt/scanx_client/assets/72285744/e630197b-d8f8-4dd4-b894-100b10f2b567">
 
 # Project flow
 Click to expand
