@@ -13,7 +13,8 @@ A react native app to scan QR code to gain access to locations in college like l
 8. Admin portal for any admin at college to check through entries of location information.
 
 # Project flow
-<img width="2826" alt="Project flow chart" src="https://github.com/aadarshkt/scanx_client/assets/72285744/df599cbe-f55f-4faa-ae90-578c3678d6bc">
+<img width="3711" alt="Project flow chart" src="https://github.com/aadarshkt/scanx_client/assets/72285744/1457640d-1917-4134-ab33-7fbab7f83bd5">
+
 
 # Inside Previews
 
