@@ -12,7 +12,8 @@ A react native app to scan QR code to gain access to locations in college like l
 7. Get total time spent at any location during entire stay at college at one place.
 8. Admin portal for any admin at college to check through entries of location information.
 
-
+# Demo Video
+https://github.com/aadarshkt/scanx_client/assets/72285744/ee1dde4e-315a-4592-894a-1fda995008a0
 
 # Structure of Scanx
 <img width="3711" alt="Architecture Scanx" src="https://github.com/aadarshkt/scanx_client/assets/72285744/e630197b-d8f8-4dd4-b894-100b10f2b567">
