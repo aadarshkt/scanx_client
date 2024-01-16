@@ -22,7 +22,7 @@ import {
 } from "../utils/localStore";
 import { useDispatch } from "react-redux";
 import { updateToken } from "../slices/authslice";
-import { baseURL } from "../api/baseURL";
+import { baseURL } from "../api/baseUrl";
 
 const SignInScreen = () => {
   const [email, setEmail] =
